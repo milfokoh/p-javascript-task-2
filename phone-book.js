@@ -21,29 +21,32 @@ let phoneBook = {
  * @returns {Boolean}
  */
 phoneBook.add = function(phone, name, email = '') {
-    let value = true;
     if (!(typeof phone == 'string' && typeof name == 'string' && typeof email == 'string')) {
-        throw new TypeError ('Передаваемые аргументы должены быть строкой');
+        // throw new TypeError ('Передаваемые аргументы должены быть строкой');
+        return false;
     }
     if (name.length == 0 ) {
-        throw new Error('Передаваемые аргументы должены быть заданной длинны');
+        // throw new Error('Передаваемые аргументы должены быть заданной длинны');
+        return false;
     }  
     if (phone.length !==  10) {
-        throw new Error('Передаваемые аргументы должены быть заданной длинны');
+        // throw new Error('Передаваемые аргументы должены быть заданной длинны');
+        return false;
     }
     else if (/^[a-zA-Z]/.test(phone)) {
-        throw new Error('Передаваемый аргумент phone не должен содержать символы');
+        // throw new Error('Передаваемый аргумент phone не должен содержать символы');
+        return false;
     }
+
     for (let phoneMap of this.users.keys()) {
         if (phoneMap == phone) {
-            value = false;
-            break;           
+            return false;           
         }
     }
-    if (value !== false) {
+    if (!false) {
         this.users.set(phone, [name, email].filter(Boolean).join(' '));
-        console.log(value);        
-    } else console.log(value);  
+        return true;        
+    } else return true;  
 }
 
 /**
@@ -54,17 +57,15 @@ phoneBook.add = function(phone, name, email = '') {
  * @returns {Boolean}
  */
 phoneBook.update = function(phone, name, email = '') {
-    let value = true;
     if (name.length !== 0) {
         for (let phoneMap of this.users.keys()) {
             if (phoneMap == phone) {
                 this.users.delete(phoneMap);
                 this.users.set(phone, [name, email].filter(Boolean).join(' '));
-                console.log(value);
-                break;           
+                return true;          
             }
         }
-    } else console.log(!value);
+    } else return false;
 }
 
 /**
@@ -107,7 +108,7 @@ phoneBook.find = function(query) {
             }            
           });
     }
-    return result;
+    return result.sort( (a, b) => a.localeCompare(b) );
 }
 
 /**
@@ -125,7 +126,7 @@ phoneBook.importFromCsv = function(csv) {
     }
     this.users.forEach((value, key) => {
         for (let i = 0; i < arr.length; i++) {
-            let item = arr[i].slice(10).split(' ').filter(Boolean).join(',');
+            let item = arr[i].slice(10).split(' ').filter(Boolean).join(' ');
             if (key == arr[i].slice(0,10)) {
                 if (value !== item) {
                     this.users.delete(key);
@@ -144,12 +145,4 @@ phoneBook.importFromCsv = function(csv) {
     return result;
 }
 
-module.exports = {
-    add,
-    update,
-    findAndRemove,
-    find,
-    importFromCsv,
-
-    isStar
-};
+module.exports = phoneBook;
