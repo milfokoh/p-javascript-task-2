@@ -9,7 +9,9 @@ const isStar = true;
 /**
  * Телефонная книга
  */
-let phoneBook;
+let phoneBook = {
+    users: new Map()
+};
 
 /**
  * Добавление записи в телефонную книгу
@@ -18,8 +20,30 @@ let phoneBook;
  * @param {String?} email
  * @returns {Boolean}
  */
-function add(phone, name, email) {
-
+phoneBook.add = function(phone, name, email = '') {
+    let value = true;
+    if (!(typeof phone == 'string' && typeof name == 'string' && typeof email == 'string')) {
+        throw new TypeError ('Передаваемые аргументы должены быть строкой');
+    }
+    if (name.length == 0 ) {
+        throw new Error('Передаваемые аргументы должены быть заданной длинны');
+    }  
+    if (phone.length !==  10) {
+        throw new Error('Передаваемые аргументы должены быть заданной длинны');
+    }
+    else if (/^[a-zA-Z]/.test(phone)) {
+        throw new Error('Передаваемый аргумент phone не должен содержать символы');
+    }
+    for (let phoneMap of this.users.keys()) {
+        if (phoneMap == phone) {
+            value = false;
+            break;           
+        }
+    }
+    if (value !== false) {
+        this.users.set(phone, [name, email].filter(Boolean).join(' '));
+        console.log(value);        
+    } else console.log(value);  
 }
 
 /**
@@ -29,8 +53,18 @@ function add(phone, name, email) {
  * @param {String?} email
  * @returns {Boolean}
  */
-function update(phone, name, email) {
-
+phoneBook.update = function(phone, name, email = '') {
+    let value = true;
+    if (name.length !== 0) {
+        for (let phoneMap of this.users.keys()) {
+            if (phoneMap == phone) {
+                this.users.delete(phoneMap);
+                this.users.set(phone, [name, email].filter(Boolean).join(' '));
+                console.log(value);
+                break;           
+            }
+        }
+    } else console.log(!value);
 }
 
 /**
@@ -38,8 +72,15 @@ function update(phone, name, email) {
  * @param {String} query
  * @returns {Number}
  */
-function findAndRemove(query) {
-
+phoneBook.findAndRemove = function(query) {
+    let result = 0;
+    this.users.forEach((value, key) => {
+        if (value.includes(query) || key.includes(query) ) {
+            this.users.delete(key);
+            result++;
+        }            
+      });
+      return result;
 }
 
 /**
@@ -47,8 +88,26 @@ function findAndRemove(query) {
  * @param {String} query
  * @returns {String[]}
  */
-function find(query) {
-
+phoneBook.find = function(query) {
+    let subStr ; let subValue;
+    let result = [];
+    if (query == '*') {
+        this.users.forEach((value, key) => {
+            subStr = `+7 (${key.substr(0, 3)}) ${key.substr(3, 3)}-${key.substr(6,2)}-${key.substr(8,2)}`;
+            subValue = value.split(' ');
+            result.push( [subValue[0], subStr, subValue[1]].filter(Boolean).join(', '));
+          });
+    }
+    else {
+        this.users.forEach((value, key) => {
+            if (value.includes(query) || key.includes(query) ) {
+                subStr = `+7 (${key.substr(0, 3)}) ${key.substr(3, 3)}-${key.substr(6,2)}-${key.substr(8,2)}`;
+                subValue = value.split(' ');
+                result.push( [subValue[0], subStr, subValue[1]].filter(Boolean).join(', '));
+            }            
+          });
+    }
+    return result;
 }
 
 /**
@@ -57,12 +116,32 @@ function find(query) {
  * @param {String} csv
  * @returns {Number} – количество добавленных и обновленных записей
  */
-function importFromCsv(csv) {
-    // Парсим csv
-    // Добавляем в телефонную книгу
-    // Либо обновляем, если запись с таким телефоном уже существует
+phoneBook.importFromCsv = function(csv) {
+    let result = 0;
+    let arr = [];
+    for (let i=0; i < csv.length; i++) {
+        arr.push(csv[i].split(';').sort( (a, b) => a.localeCompare(b) ).join(' '));
+        result++;
+    }
+    this.users.forEach((value, key) => {
+        for (let i = 0; i < arr.length; i++) {
+            let item = arr[i].slice(10).split(' ').filter(Boolean).join(',');
+            if (key == arr[i].slice(0,10)) {
+                if (value !== item) {
+                    this.users.delete(key);
+                    this.users.set(key, item);
+                }                
+            } else {
+                    this.users.set(arr[i].slice(0,10), item);
+            }
+        }
 
-    return csv.split('\n').length;
+        if (/[ ]/.test(key)){
+            this.users.delete(key);
+            result--;
+        }
+    });
+    return result;
 }
 
 module.exports = {

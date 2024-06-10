@@ -38,7 +38,7 @@ if (phoneBook.isStar) {
         'Алексей;5551110011;alex@example.com',
         'Валерий;5553330033;valera@example.com',
         'Неизвестный;3330033;unknown@example.com'
-    ].join('\n');
+    ];
 
     // Импорт записей из csv, вернется `4`
     phoneBook.importFromCsv(csv);
