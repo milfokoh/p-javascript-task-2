@@ -22,19 +22,15 @@ let phoneBook = {
  */
 phoneBook.add = function(phone, name, email = '') {
     if (!(typeof phone == 'string' && typeof name == 'string' && typeof email == 'string')) {
-        // throw new TypeError ('Передаваемые аргументы должены быть строкой');
         return false;
     }
     if (name.length == 0 ) {
-        // throw new Error('Передаваемые аргументы должены быть заданной длинны');
         return false;
     }  
     if (phone.length !==  10) {
-        // throw new Error('Передаваемые аргументы должены быть заданной длинны');
         return false;
     }
     else if (/^[a-zA-Z]/.test(phone)) {
-        // throw new Error('Передаваемый аргумент phone не должен содержать символы');
         return false;
     }
 
