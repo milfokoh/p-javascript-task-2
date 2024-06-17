@@ -21,7 +21,7 @@ let phoneBook = {
  * @returns {Boolean}
  */
 phoneBook.add = function(phone, name, email = '') {
-    if (!(typeof phone == 'string' && typeof name == 'string' && typeof email == 'string')) {
+    if (typeof phone !== 'string' || typeof name !== 'string' || typeof email !== 'string') {
         return false;
     }
     if (name.length == 0 ) {
