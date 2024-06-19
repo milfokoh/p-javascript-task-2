@@ -2,6 +2,7 @@
 
 const phoneBook = require('./phone-book');
 
+
 // Эти записи добавятся, вернется `true`
 phoneBook.add('5554440044', 'Григорий', 'grisha@example.com');
 phoneBook.add('5552220022', 'Борис', 'boris@example.com');
@@ -38,7 +39,7 @@ if (phoneBook.isStar) {
         'Алексей;5551110011;alex@example.com',
         'Валерий;5553330033;valera@example.com',
         'Неизвестный;3330033;unknown@example.com'
-    ].join('\n');
+    ];
 
     // Импорт записей из csv, вернется `4`
     phoneBook.importFromCsv(csv);
